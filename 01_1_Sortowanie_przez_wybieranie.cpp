@@ -1,19 +1,21 @@
 
 /*
+    SELECTION SORT (Sortowanie przez wybieranie)
 
-ZADANIE 1
+    Polega na wyszukiwaniu najmniejszego elementu w nieposortowanej części tablicy
+    i zamianie go z pierwszym elementem tej części.
 
-SORTOWANIE PRZEZ WYBIERANIE - wyszukuje element, ktory ma byc na zadanej pozycji i zamienia z tym, ktory tam jest.
-* złożoność: n^2. nawet gdy już są ustawione rosnąco, musi przeszukać całą tablicę do końca, bo nie wie, gdzie jest minimum
-* sortowanie w miejscu
-* algorytm niestabilny 
+    Cechy:
+    - Złożoność czasowa: O(n^2) (niezależnie od uporządkowania danych)
+    - Złożoność pamięciowa: O(1)
+    - Sortowanie w miejscu (in-place)
+    - Algorytm niestabilny
 
-start od 0
-for ma sie zatrzymac na i <= n-2
-zamieniac elementy po wewnętrznym for, nie w nim
-
+    Schemat:
+    1. Dla każdego indeksu i (od 0 do n-2):
+       a. Znajdź indeks najmniejszego elementu w zakresie [i, n-1]
+       b. Zamień element o indeksie min z elementem o indeksie i
 */
-
 
 
 #include <iostream>
@@ -24,6 +26,7 @@ using namespace std;
 
 int counter = 0;
 
+// Funkcja wypełnia tablicę losowymi liczbami z zakresu 0–99
 int RandomArray(int tab[], int n){
     srand(time(0));
     for (int i = 0; i < n; i++)
@@ -31,6 +34,7 @@ int RandomArray(int tab[], int n){
     return 0;
 }
 
+// Funkcja wypisuje zawartość tablicy
 int Print(int tab[], int n){
     for (int i = 0; i < n; i++) {
         cout <<  tab[i] << " ";
@@ -38,6 +42,7 @@ int Print(int tab[], int n){
     return 0;
 }
 
+// Funkcja sortująca
 int SelectSort(int tab[], int n){
     for (int i = 0; i <= n-2; i++) {
         int min = i;
@@ -47,11 +52,12 @@ int SelectSort(int tab[], int n){
                 min = j;
             }
         }
-        swap(tab[min], tab[i]);
+        swap(tab[min], tab[i]); // Zamiana znalezionego minimum z bieżacym elementem
     }
     return 0;
 }
 
+// Funkcja testująca działanie algorytmu sortowania (dla tablicy o podanym rozmiarze)
 void sortTest(int tab[], int n) {
     cout << "Sortowanie tablicy z " << n << " liczbami" << endl;
     RandomArray(tab, n);
@@ -62,8 +68,8 @@ void sortTest(int tab[], int n) {
     cout << "Tablica posortowana: " << endl;
     Print(tab, n);
     cout << endl;
-    cout << "ilosc porównan z działania algorytmu: " << counter << endl;
-    cout << "Ilość porównań ze wzoru: " << n*(n-1)/2 << endl;
+    cout << "Liczba porównań wykonanych przez algorytm: " << counter << endl; // Złożoność czasowa 
+    cout << "Liczba porównań teoretyczna (n*(n-1)/2): " << n*(n-1)/2 << endl;
     counter = 0;
 }
 
@@ -80,5 +86,6 @@ int main() {
 
     return 0;
 }
+
 
 
