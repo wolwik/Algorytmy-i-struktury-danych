@@ -1,0 +1,152 @@
+/*
+    LISTA DWUKIERUNKOWA – PODSTAWY (Doubly Linked List Basics)
+
+    Idea:
+    Każdy element (węzeł) trzyma wartość oraz dwa wskaźniki: na poprzedni i następny.
+    Dzięki temu można poruszać się po liście w dwóch kierunkach oraz łatwiej usuwać
+    elementy w środku struktury – mamy szybki dostęp zarówno do poprzednika, jak i następcy.
+
+    Cechy:
+    - Dynamiczna struktura danych – rośnie i maleje w trakcie działania programu
+    - Podwójne połączenia (prev/next) ułatwiają operacje usuwania
+    - Nie wymaga ciągłego bloku pamięci – każdy węzeł żyje tam, gdzie akurat został zaalokowany
+    - Dostęp sekwencyjny — nie mamy bezpośredniego indeksu jak w tablicy
+
+    Operacje w tym przykładzie:
+    - insert_front: dodanie elementu na początek listy
+    - delete_p: usunięcie konkretnego węzła (jeśli mamy do niego wskaźnik)
+    - find: wyszukanie elementu o danej wartości
+    - size: policzenie liczby elementów
+    - print: wypisanie listy od początku do końca
+
+    Złożoność:
+    - Dodanie na początek: O(1)
+    - Usunięcie znanego elementu: O(1) — nie musimy szukać poprzednika
+    - Wyszukiwanie po wartości: O(n)
+    - Przejście przez listę: O(n)
+
+*/
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <locale.h>
+
+using namespace std;
+
+// Węzeł listy dwukierunkowej — przechowuje wartość oraz wskaźniki
+// na sąsiednie elementy
+struct Node {
+	Node* next;
+	Node* prev;
+	int data;
+};
+
+// head jest przekazywany przez referencję,
+// więc operujemy na prawdziwej liście, a nie jej kopii.
+
+// Dodanie elementu na początek listy
+void insert_front(Node*& head, int data) {
+	Node* p = new Node;
+
+	p->data = data;
+
+	// Jeżeli lista jest pusta
+	if (!head) {
+		head = p;
+		p->next = NULL;
+		p->prev = NULL;
+	} else {
+		// Podpinamy nowy element przed dotychczasowym head
+		p->next = head;
+		head->prev = p;
+		head = p;
+		head->prev = NULL; // nowy pierwszy element nie ma poprzednika
+	}
+}
+
+// Usunięcie elementu wskazywanego przez p
+void delete_p(Node*& head, Node* p) {
+	// Usuwamy pierwszy element
+	if (p == head) {
+		head = p->next;
+
+		if (head) {         // jeżeli lista nie zrobiła się pusta
+			head->prev = NULL;
+		}
+
+		delete p;
+	} else {
+		// Poprawiamy wskaźniki sąsiadów
+		p->prev->next = p->next;
+
+		if (p->next) {
+			p->next->prev = p->prev;
+		}
+
+		delete p;
+	}
+}
+
+// Znajdź pierwszy element o danej wartości
+Node* find(Node* p, int data) {
+	while (p) {
+		if (p->data == data) return p;
+		p = p->next;
+	}
+	return NULL;
+}
+
+// Policz elementy listy
+int size(Node* p) {
+	int size = 0;
+	while (p) {
+		p = p->next;
+		size++;
+	}
+	return size;
+}
+
+// Wypisz listę od początku
+void print(Node* head) {
+	int i = 0;
+	Node* p = head;
+
+	while (p) {
+		cout << ++i << ": " << p->data << endl;
+		p = p->next;
+	}
+}
+
+int main() {
+	Node *L, *p;
+	int i, data;
+
+	L = NULL;
+
+	setlocale(LC_CTYPE, "Polish");
+
+	// Dodaj 20 pseudolosowych liczb do listy
+	srand(time(NULL));
+	for (i = 0; i < 20; i++) {
+		insert_front(L, rand() % 100);
+	}
+
+	print(L);
+	cout << endl;
+
+	cout << "Wprowadz liczbe do usuniecia: ";
+	cin >> data;
+	cout << endl;
+
+	p = find(L, data);
+
+	if (p != NULL) delete_p(L, p);
+	else cout << "Brak elementu na liscie" << endl;
+
+	cout << "Ilosc elementow na liscie: " << size(L) << endl;
+
+	print(L);
+
+	return 0;
+}
