@@ -1,0 +1,138 @@
+/*
+    LISTA JEDNOKIERUNKOWA 
+
+    Struktura, w której każdy element (węzeł) trzyma wartość oraz wskaźnik
+    na kolejny element. Dzięki temu lista może dynamicznie rosnąć i kurczyć się
+    bez potrzeby przesuwania danych w pamięci.
+
+    Cechy:
+    - Dynamiczna – nie trzeba znać rozmiaru z góry, elementy tworzą się w locie
+    - Świetnie sprawdza się, gdy często dodajemy/usuwamy elementy na początku
+    - Elementy nie leżą obok siebie w pamięci — skokowe adresowanie przez "next"
+    - Dostęp sekwencyjny — żeby dojść do i-tego elementu, trzeba przejść wszystkie poprzednie
+
+    Operacje:
+    - insert_front: dodaje element na początek listy
+    - delete_p: usuwa wskazany węzeł
+    - find: wyszukuje po wartości i zwraca wskaźnik do elementu
+    - size: liczy liczbę elementów
+    - print: wypisuje zawartość listy
+
+    Złożoność:
+    - Wstawienie na początek: O(1)
+    - Usunięcie wskazanego elementu (gdy znamy jego adres): O(n) — trzeba znaleźć poprzedni węzeł
+    - Wyszukiwanie po wartości: O(n)
+    - Dostęp do i-tego elementu: O(n)
+    - Zliczanie elementów: O(n)
+
+*/
+
+#include <iostream>
+#include <cstdlib>   
+#include <ctime>    
+#include <locale.h>  
+
+using namespace std;
+
+// Prosta struktura węzła listy jednokierunkowej
+struct Node {
+	int data;       // przechowywana wartość
+	Node* next;     // wskaźnik na kolejny element
+};
+
+// Funkcja przyjmuje head przez referencję,
+// więc operujemy na prawdziwej liście, a nie kopii.
+
+// Dodanie elementu na początek listy
+void insert_front(Node*& head, int data) {
+	Node* p = new Node;
+	p->data = data;
+	p->next = head; // nowy element wskazuje na dotychczasowy początek
+	head = p;       // aktualizujemy head
+}
+
+// Usunięcie elementu wskazywanego przez p
+void delete_p(Node*& head, Node* p) {
+	Node* prev = NULL;
+
+	if (head == p) {       // przypadek: usuwamy pierwszy element
+		head = head->next;
+		delete p;
+	} else {
+		prev = head;
+
+		// szukamy elementu poprzedzającego p
+		while (prev->next != p) {
+			prev = prev->next;
+		}
+
+		prev->next = p->next; // pomijamy p w łańcuchu
+		delete p;             // zwalniamy pamięć
+	}
+}
+
+// Znajdź element o podanej wartości i zwróć wskaźnik na niego
+Node* find(Node* p, int data) {
+	while (p) {
+		if (p->data == data) return p;
+		p = p->next;
+	}
+	return NULL; // nie znaleziono
+}
+
+// Policz liczbę elementów listy
+int size(Node* p) {
+	int size = 0;
+	while (p) {
+		p = p->next;
+		size++;
+	}
+	return size;
+}
+
+// Wypisz elementy listy
+void print(Node* head) {
+	int i = 0;
+	Node* p = head;
+
+	while (p) {
+		cout << ++i << ": " << p->data << endl;
+		p = p->next;
+	}
+
+	cout << endl;
+}
+
+int main() {
+	Node *L, *p;
+	int i, data;
+
+	L = NULL;
+
+	setlocale(LC_CTYPE, "Polish");
+
+	// Dodaj do listy 20 pseudolosowych liczb 0–99
+	srand(time(NULL));
+	for (i = 0; i < 20; i++) {
+		insert_front(L, rand() % 100);
+	}
+
+	print(L);
+
+	cout << "Wprowadz liczbe do usuniecia: ";
+	cin >> data;
+	cout << endl;
+
+	p = find(L, data);
+
+	// Sprawdź, czy dany element istnieje
+	if (p != NULL) delete_p(L, p);
+	else cout << "Brak elementu na liscie." << endl;
+
+	cout << "Ilosc elementow na liscie: " << size(L) << endl;
+
+	print(L);
+
+	return 0;
+}
+
