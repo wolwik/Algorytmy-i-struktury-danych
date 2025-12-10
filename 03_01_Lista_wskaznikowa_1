@@ -1,5 +1,5 @@
 /*
-    LISTA JEDNOKIERUNKOWA 
+    LISTA WSKAZNIKOWA JEDNOKIERUNKOWA 
 
     Struktura, w której każdy element (węzeł) trzyma wartość oraz wskaźnik
     na kolejny element. Dzięki temu lista może dynamicznie rosnąć i kurczyć się
